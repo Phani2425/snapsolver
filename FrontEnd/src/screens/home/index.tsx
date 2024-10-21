@@ -199,10 +199,10 @@ export default function Home() {
 
     return (
         <>
-            <div className='grid grid-cols-3 gap-2'>
+            <div className='grid grid-cols-3 gap-2 mt-3'>
                 <Button
                     onClick={() => setReset(true)}
-                    className='z-20 bg-black text-white'
+                    className='z-20 bg-black text-white font-bold text-xl'
                     variant='default' 
                     color='black'
                 >
@@ -210,12 +210,12 @@ export default function Home() {
                 </Button>
                 <Group className='z-20'>
                     {SWATCHES.map((swatch) => (
-                        <ColorSwatch key={swatch} color={swatch} onClick={() => setColor(swatch)} />
+                        <ColorSwatch className='cursor-pointer hover:scale-110' key={swatch} color={swatch} onClick={() => setColor(swatch)} />
                     ))}
                 </Group>
                 <Button
                     onClick={runRoute}
-                    className='z-20 bg-black text-white'
+                    className='z-20 bg-black text-white font-bold text-xl'
                     variant='default'
                     color='white'
                 >
