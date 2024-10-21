@@ -29,7 +29,7 @@ const Home = () => {
         if(canvas){
             const Response = await axios({
                 method:'POST',
-                url:`${process.env.API_URL}/calculate`,
+                url:`${import.meta.env.VITE_API_URL}/calculate`,
                 data:{
                     image: canvas.toDataURL('image/png'),
                     dict_of_vars:dictOfVars
