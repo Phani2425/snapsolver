@@ -1,0 +1,390 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import { motion, useAnimation, useInView } from 'framer-motion'
+import { ArrowRightIcon, CalculatorIcon, PencilIcon, DocumentChartBarIcon, AcademicCapIcon, SparklesIcon, UserIcon, UserPlusIcon, CalculatorIcon as CalcIcon } from '@heroicons/react/24/outline'
+import { Link } from 'react-router-dom'
+import calc from '../../assets/calc.png'
+import showcase2 from '../../assets/showcase2.png'
+
+const FloatingIconSquare = ({ icon: Icon, initialX, initialY }:{icon: React.FC<React.SVGProps<SVGSVGElement>>,initialX:number,initialY:number}) => {
+  const controls = useAnimation()
+
+  useEffect(() => {
+    controls.start({
+      x: [initialX, initialX + 40, initialX - 40, initialX],
+      y: [initialY, initialY - 40, initialY + 40, initialY],
+      rotate: [0, 5, -5, 0],
+      transition: {
+        duration: 20,
+        repeat: Infinity,
+        repeatType: "reverse",
+        ease: "easeInOut",
+      },
+    })
+  }, [controls, initialX, initialY])
+
+  return (
+    <motion.div
+      animate={controls}
+      className="absolute"
+    >
+      <div className="bg-purple-600 bg-opacity-20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-400">
+        <Icon className="w-12 h-12 text-purple-300" />
+      </div>
+    </motion.div>
+  )
+}
+
+const MacScreen = ({ children }:{children:React.ReactNode}) => (
+  <div className="bg-gray-800 rounded-2xl p-4 shadow-2xl max-w-3xl mx-auto">
+    <div className="bg-gray-900 rounded-xl overflow-hidden">
+      <div className="bg-gray-800 p-2 flex items-center space-x-2">
+        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+      </div>
+      <div className="p-4">
+        {children}
+      </div>
+    </div>
+  </div>
+)
+
+const FeatureCard = ({ icon: Icon, title, description }: {
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    title: string;
+    description: string;
+  }) => (
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    className="bg-gray-800 p-6 rounded-xl shadow-lg"
+  >
+    <Icon className="w-12 h-12 text-purple-500 mb-4" />
+    <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+    <p className="text-gray-300">{description}</p>
+  </motion.div>
+)
+
+const AnimatedText = ({ text, className }:{text:string,className:string}) => (
+  <div className={`flex flex-wrap justify-center ${className}`}>
+    {text.split('').map((char:string, index:number) => (
+      <motion.span
+        key={index}
+        className="inline-block"
+        whileHover={{
+          scale: 1.2,
+          rotate: 5,
+          color: '#a855f7',
+          transition: { duration: 0.2 }
+        }}
+      >
+        {char === ' ' ? '\u00A0' : char}
+      </motion.span>
+    ))}
+  </div>
+)
+
+const StatCard = ({ icon: Icon, value, label }:{icon: React.FC<React.SVGProps<SVGSVGElement>>,value:string,label:string}) => (
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    className="bg-purple-800 bg-opacity-30 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-purple-400 flex flex-col items-center"
+  >
+    <Icon className="w-12 h-12 text-purple-300 mb-4" />
+    <motion.span
+      className="text-4xl font-bold text-white mb-2"
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      {value}
+    </motion.span>
+    <span className="text-purple-200">{label}</span>
+  </motion.div>
+)
+
+const FAQItem = ({ question, answer }:{question:string,answer:string}) => (
+  <motion.div
+    whileHover={{ scale: 1.02 }}
+    className="bg-gray-700 p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:bg-gray-600"
+  >
+    <h3 className="text-xl font-bold text-white mb-2">{question}</h3>
+    <p className="text-gray-300">{answer}</p>
+  </motion.div>
+)
+
+const ScrollAnimatedSection = ({ children }:{children:React.ReactNode}) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, amount: 0.2 })
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 0.8 }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+export default function LandingPage() {
+  const [isHovered, setIsHovered] = useState(false)
+
+  useEffect(() => {
+    // Add smooth scrolling behavior
+    document.documentElement.style.scrollBehavior = 'smooth'
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto'
+    }
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white">
+      <nav className="w-full p-6 flex justify-between items-center bg-gray-800 bg-opacity-50 backdrop-blur-md fixed top-0 z-50">
+        <motion.h1
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-3xl font-bold text-purple-300"
+        >
+          SnapSolver
+        </motion.h1>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="bg-purple-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg"
+        >
+          Sign Up
+        </motion.button>
+      </nav>
+
+      <main className="pt-24">
+        <section className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+          <FloatingIconSquare icon={CalculatorIcon} initialX={-600} initialY={-100} />
+          <FloatingIconSquare icon={PencilIcon} initialX={500} initialY={-150} />
+          <FloatingIconSquare icon={DocumentChartBarIcon} initialX={-150} initialY={250} />
+          
+          <div className="max-w-5xl w-full text-center z-10">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
+            >
+              Revolutionize Your Calculations
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-xl md:text-2xl text-purple-200 mb-12"
+            >
+              SnapSolver harnesses the power of AI to transform how you approach mathematics.
+            </motion.p>
+            <Link to={'/canvas'}>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg flex items-center mx-auto"
+              onHoverStart={() => setIsHovered(true)}
+              onHoverEnd={() => setIsHovered(false)}
+            >
+              Start Calculating
+              <motion.div
+                animate={{ x: isHovered ? 5 : 0 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+              >
+                <ArrowRightIcon className="w-5 h-5 ml-2" />
+              </motion.div>
+            </motion.button>
+            </Link>
+          </div>
+        </section>
+
+        <ScrollAnimatedSection>
+          <section className="py-24 px-4">
+            <div className="max-w-6xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="mb-12"
+              >
+                <AnimatedText
+                  text="Unlock the Power of AI-Driven Mathematics"
+                  className="text-4xl md:text-5xl font-bold text-center"
+                />
+              </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <FeatureCard
+                  icon={SparklesIcon}
+                  title="Intelligent Problem Solving"
+                  description="Our AI analyzes and solves complex mathematical problems, providing step-by-step explanations."
+                />
+                <FeatureCard
+                  icon={DocumentChartBarIcon}
+                  title="Advanced Visualization"
+                  description="Transform abstract concepts into interactive visual representations for deeper understanding."
+                />
+                <FeatureCard
+                  icon={AcademicCapIcon}
+                  title="Personalized Learning"
+                  description="Adaptive learning algorithms tailor problems and explanations to your skill level."
+                />
+              </div>
+            </div>
+          </section>
+        </ScrollAnimatedSection>
+
+        <ScrollAnimatedSection>
+          <section className="py-24 px-4 bg-gray-800">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-bold mb-12 text-center">See SnapSolver in Action</h2>
+              <MacScreen>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <img
+                    src={showcase2}
+                    alt="SnapSolver Interface"
+                    className="w-full rounded-lg shadow-lg"
+                  />
+                </motion.div>
+              </MacScreen>
+            </div>
+          </section>
+        </ScrollAnimatedSection>
+
+        <ScrollAnimatedSection>
+          <section className="py-24 px-4">
+            <div className="max-w-6xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8 }}
+                className="bg-gradient-to-r from-purple-900 to-indigo-900 rounded-3xl p-12 shadow-2xl"
+              >
+                <div className="flex flex-col md:flex-row items-center justify-between">
+                  <div className="mb-8 md:mb-0 md:mr-8">
+                    <h3 className="text-3xl font-bold text-white mb-4">
+                      Experience the Future of Calculation
+                    </h3>
+                    <p className="text-purple-200 mb-6">
+                      Join thousands of students and professionals who have transformed their mathematical capabilities with SnapSolver.
+                    </p>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold shadow-lg flex items-center"
+                    >
+                      Start Free Trial
+                      <ArrowRightIcon className="w-5 h-5 ml-2" />
+                    </motion.button>
+                  </div>
+                  <motion.div
+                    animate={{
+                      y: [0, -15, 0],
+                      transition: { repeat: Infinity, duration: 3 }
+                    }}
+                    className="w-64 h-64"
+                  >
+                    <img
+                      src={calc}
+                      alt="SnapSolver App Interface"
+                    />
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+        </ScrollAnimatedSection>
+
+        <ScrollAnimatedSection>
+          <section className="py-24 px-4">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-bold mb-12 text-center">SnapSolver by the Numbers</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <StatCard icon={UserIcon} value="1M+" label="Website Visitors" />
+                <StatCard icon={UserPlusIcon} value="500K+" label="Registered Users" />
+                <StatCard icon={CalcIcon} value="10M+" label="Calculations Performed" />
+              </div>
+            </div>
+          </section>
+        </ScrollAnimatedSection>
+
+        <ScrollAnimatedSection>
+          <section className="py-24 px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-4xl md:text-5xl font-bold mb-6"
+              >
+                What Our Users Say
+              </motion.h2>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="bg-gray-800 p-8 rounded-xl shadow-lg"
+              >
+                <p className="text-xl text-purple-200 mb-4">
+                  "SnapSolver has completely changed how I approach complex  calculations. It's like having a brilliant math tutor available 24/7!"
+                </p>
+                <p className="font-semibold text-white">- Sarah J., Engineering Student</p>
+              </motion.div>
+            </div>
+          </section>
+        </ScrollAnimatedSection>
+
+        <ScrollAnimatedSection>
+          <section className="py-24 px-4 bg-gray-800">
+            <div className="max-w-6xl mx-auto">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-4xl md:text-5xl font-bold mb-12 text-center"
+              >
+                Frequently Asked Questions
+              </motion.h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <FAQItem
+                  question="How accurate is SnapSolver?"
+                  answer="Our AI is trained on vast datasets and continuously updated, ensuring high accuracy across various mathematical domains."
+                />
+                <FAQItem
+                  question="Can SnapSolver handle advanced mathematics?"
+                  answer="SnapSolver is equipped to handle problems from basic arithmetic to advanced calculus and beyond."
+                />
+              </div>
+            </div>
+          </section>
+        </ScrollAnimatedSection>
+      </main>
+
+      <footer className="bg-gray-900 py-12 px-4">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-8 md:mb-0">
+            <h3 className="text-2xl font-bold text-purple-300 mb-2">SnapSolver</h3>
+            <p className="text-gray-400">Empowering mathematical minds with AI</p>
+          </div>
+          <nav className="flex gap-8">
+            <a href="#" className="text-gray-400 hover:text-white transition-colors">About</a>
+            <a href="#" className="text-gray-400 hover:text-white transition-colors">Features</a>
+            <a href="#" className="text-gray-400 hover:text-white transition-colors">Pricing</a>
+            <a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a>
+          </nav>
+        </div>
+        <div className="mt-8 text-center text-gray-500">
+          <p>&copy; 2024 SnapSolver. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  )
+}
