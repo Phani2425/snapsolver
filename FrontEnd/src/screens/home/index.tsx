@@ -20,7 +20,6 @@ import Slider from "@mui/material/Slider";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaEraser } from "react-icons/fa";
 
-// import {LazyBrush} from 'lazy-brush';
 
 interface GeneratedResult {
   expression: string;
@@ -68,11 +67,7 @@ export default function Home() {
   const [eraserSize, seteraserSize] = useState<number>(1);
   const [eraserSelected, seteraserSelecetd] = useState(false);
 
-  // const lazyBrush = new LazyBrush({
-  //     radius: 10,
-  //     enabled: true,
-  //     initialPoint: { x: 0, y: 0 },
-  // });
+
 
   useEffect(() => {
     if (result) {
