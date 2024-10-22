@@ -17,6 +17,58 @@ import { Link } from "react-router-dom";
 import calc from "../../assets/calc.png";
 import showcase2 from "../../assets/showcase2.png";
 import showcase1 from "../../assets/showcase1.png";
+import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import { Boxes } from "@/components/ui/background-boxes";
+import { cn } from "@/lib/utils";
+import { BackgroundLines } from "@/components/ui/background-lines";
+import { CardSpotlight } from "@/components/ui/card-spotlight";
+
+
+const people = [
+  {
+    id: 1,
+    name: "John Doe",
+    designation: "Software Engineer",
+    image:
+      "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3387&q=80",
+  },
+  {
+    id: 2,
+    name: "Robert Johnson",
+    designation: "Product Manager",
+    image:
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+  },
+  {
+    id: 3,
+    name: "Jane Smith",
+    designation: "Data Scientist",
+    image:
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+  },
+  {
+    id: 4,
+    name: "Emily Davis",
+    designation: "UX Designer",
+    image:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+  },
+  {
+    id: 5,
+    name: "Tyler Durden",
+    designation: "Soap Developer",
+    image:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80",
+  },
+  {
+    id: 6,
+    name: "Dora",
+    designation: "The Explorer",
+    image:
+      "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3534&q=80",
+  },
+];
 
 const FloatingIconSquare = ({
   icon: Icon,
@@ -44,6 +96,7 @@ const FloatingIconSquare = ({
   }, [controls, initialX, initialY]);
 
   return (
+    
     <motion.div animate={controls} className="absolute">
       <div className="bg-purple-600 bg-opacity-20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-400">
         <Icon className="w-12 h-12 text-purple-300" />
@@ -53,7 +106,7 @@ const FloatingIconSquare = ({
 };
 
 const MacScreen = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-gray-800 rounded-2xl p-4 shadow-2xl max-w-6xl mx-auto">
+  <div className="bg-gray-800 rounded-2xl p-4 shadow-2xl max-w-6xl mx-auto z-10">
     <div className="bg-gray-900 rounded-xl overflow-hidden">
       <div className="bg-gray-800 p-2 flex items-center space-x-2">
         <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -74,14 +127,14 @@ const FeatureCard = ({
   title: string;
   description: string;
 }) => (
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    className="bg-gray-800 p-6 rounded-xl shadow-lg"
-  >
-    <Icon className="w-12 h-12 text-purple-500 mb-4" />
-    <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-    <p className="text-gray-300">{description}</p>
-  </motion.div>
+    <CardSpotlight className=" bg-gray-800 p-6 rounded-xl shadow-lg hover:scale-105 transition-all duration-200" >
+
+    <Icon className="w-12 h-12 text-purple-500 mb-4 z-50" />
+    <h3 className="text-xl font-bold text-white mb-2 z-20">{title}</h3>
+    <p className="text-gray-300 z-20">{description}</p>
+
+    </CardSpotlight>
+
 );
 
 const AnimatedText = ({
@@ -100,7 +153,7 @@ const AnimatedText = ({
           scale: 1.2,
           rotate: 5,
           color: "#a855f7",
-          transition: { duration: 0.2 },
+          transition: { duration: 0.1 },
         }}
       >
         {char === " " ? "\u00A0" : char}
@@ -217,6 +270,7 @@ export default function LandingPage() {
           />
 
           <div className="max-w-5xl w-full text-center z-10">
+          <BackgroundLines className="flex items-center justify-center w-full flex-col px-4 bg-transparent ">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -234,9 +288,10 @@ export default function LandingPage() {
               SnapSolver harnesses the power of AI to transform how you approach
               mathematics.
             </motion.p>
+            </BackgroundLines>
             <Link to={"/canvas"}>
               <motion.div
-                className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg flex items-center mx-auto w-fit"
+                className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg flex items-center mx-auto w-fit z-20"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -291,9 +346,9 @@ export default function LandingPage() {
         </ScrollAnimatedSection>
 
         <ScrollAnimatedSection>
-          <section className="py-24 px-4 bg-gray-800">
+          <section className="py-24 w-full rounded-md bg-slate-900 relative flex flex-col items-center justify-center antialiased">
             <div className="max-w-6xl mx-auto flex flex-col gap-8">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center z-10">
                 See SnapSolver in Action
               </h2>
               <MacScreen>
@@ -324,6 +379,7 @@ export default function LandingPage() {
                 </motion.div>
               </MacScreen>
             </div>
+            <BackgroundBeams/>
           </section>
         </ScrollAnimatedSection>
 
@@ -346,7 +402,7 @@ export default function LandingPage() {
                       transformed their mathematical capabilities with
                       SnapSolver.
                     </p>
-                    <Link to={'/canavs'}>
+                    <Link to={"/canavs"}>
                       <motion.div
                         className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold shadow-lg flex items-center w-fit"
                         whileHover={{ scale: 1.1 }}
@@ -426,6 +482,9 @@ export default function LandingPage() {
               >
                 What Our Users Say
               </motion.h2>
+              <div className="flex flex-row items-center justify-center mb-10 w-full">
+                <AnimatedTooltip items={people} />
+              </div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -446,17 +505,22 @@ export default function LandingPage() {
         </ScrollAnimatedSection>
 
         <ScrollAnimatedSection>
-          <section className="py-24 px-4 bg-gray-800">
-            <div className="max-w-6xl mx-auto">
+          <section className="py-24 px-4 bg-gray-800 relative w-full overflow-hidden flex flex-col items-center justify-center rounded-lg">
+
+          <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
+ 
+          <Boxes />
+            
+        
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                className="text-4xl md:text-5xl font-bold mb-12 text-center"
+                className={cn("md:text-4xl text-xl text-white relative z-20 mb-9")}
               >
                 Frequently Asked Questions
               </motion.h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto z-10">
                 <FAQItem
                   question="How accurate is SnapSolver?"
                   answer="Our AI is trained on vast datasets and continuously updated, ensuring high accuracy across various mathematical domains."
@@ -466,7 +530,7 @@ export default function LandingPage() {
                   answer="SnapSolver is equipped to handle problems from basic arithmetic to advanced calculus and beyond."
                 />
               </div>
-            </div>
+            
           </section>
         </ScrollAnimatedSection>
       </main>
@@ -509,7 +573,7 @@ export default function LandingPage() {
           </nav>
         </div>
         <div className="mt-8 text-center text-gray-500">
-          <p>&copy; 2024 SnapSolver. All rights reserved.</p>
+          <p>made with ❤️ by Phani Bhusan</p>
         </div>
       </footer>
     </div>
