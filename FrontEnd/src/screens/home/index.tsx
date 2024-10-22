@@ -16,6 +16,10 @@ import {
     SheetTrigger
     
   } from "@/components/ui/sheet"
+
+  import Slider from '@mui/material/Slider';
+  import { FaPencilAlt } from "react-icons/fa";
+  import { FaEraser } from "react-icons/fa";
   
 // import {LazyBrush} from 'lazy-brush';
 
@@ -61,6 +65,9 @@ export default function Home() {
     const [latexPosition, setLatexPosition] = useState({ x: 10, y: 200 });
     const [latexExpression, setLatexExpression] = useState<Array<string>>([]);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [penSize, setPenSize] = useState<number>(3);
+    const [eraserSize, seteraserSize] = useState<number>(1);
+    const [eraserSelected,seteraserSelecetd] = useState(false);
 
     // const lazyBrush = new LazyBrush({
     //     radius: 10,
@@ -82,6 +89,8 @@ export default function Home() {
             setLatexExpression([]);
             setResult(undefined);
             setDictOfVars({});
+            setPenSize(3);
+            seteraserSize(1);
             setReset(false);
         }
     }, [reset]);
@@ -102,6 +111,20 @@ export default function Home() {
 
 
     }, []);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+    
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.lineWidth = penSize;
+            }
+
+        }
+
+
+    }, [penSize]);
 
 
     useEffect(() => {
@@ -145,7 +168,7 @@ export default function Home() {
     }, [latexExpression]);
 
     const renderLatexToCanvas = (expression: string, answer: string) => {
-        const latex = `\\(\\LARGE{${expression} = ${answer}}\\)`;
+        const latex = `${expression} = ${answer}`;
         setLatexExpression([...latexExpression, latex]);
 
         // Clear the main canvas
@@ -189,9 +212,18 @@ export default function Home() {
         if (canvas) {
             const ctx = canvas.getContext('2d');
             if (ctx) {
-                ctx.strokeStyle = color;
-                ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-                ctx.stroke();
+                if(eraserSelected){
+                    ctx.clearRect(
+                        e.nativeEvent.offsetX - 10,
+                        e.nativeEvent.offsetY - 10,
+                        eraserSize*10, // Width of the eraser
+                        eraserSize*10  // Height of the eraser
+                    );
+                }else{
+                    ctx.strokeStyle = color;
+                    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+                    ctx.stroke();
+                }
             }
         }
     };
@@ -261,6 +293,16 @@ export default function Home() {
         setIsMenuOpen(open);
     }
 
+    const sliderChangeHandler =  (_: Event, newValue: number | number[]) => {
+        if(typeof newValue === 'number'){
+            if(eraserSelected){
+                seteraserSize(newValue)
+            }else{
+                setPenSize(newValue)
+            }
+        }
+    }
+
     return (
         <>
 
@@ -282,7 +324,7 @@ export default function Home() {
                   <div className=' grid-cols-1 gap-4 mt-3 grid'>
                 <Button
                     onClick={() => {setReset(true);setIsMenuOpen(false);}}
-                    className='z-20 bg-black text-white font-bold text-xl'
+                    className='z-20 bg-red-600 hover:bg-red-700 text-white font-bold text-xl'
                     variant='default' 
                     color='black'
                 >
@@ -291,8 +333,7 @@ export default function Home() {
                 <Button
                      
                     onClick={() => {runRoute();setIsMenuOpen(false);}}
-                    className='z-20 bg-black text-white font-bold text-xl'
-                    variant='default'
+                    className='z-20 text-white font-bold text-xl bg-green-500 hover:bg-green-700'
                     color='white'
                 >
                     Run
@@ -312,6 +353,31 @@ export default function Home() {
                   </SheetFooter>
                 </SheetContent>
               </Sheet>
+
+
+  {/* Slider positioned absolutely */}
+  <div style={{ position: 'absolute', top: '35%', left: '40px', zIndex: 20 }} className='bg-slate-300 px-1 py-3 rounded-lg flex flex-col items-center gap-4'>
+  <Slider
+    style={{ zIndex: 20,height: '200px' }}
+    aria-label="pen size"
+    orientation="vertical"
+    valueLabelDisplay="auto"
+    defaultValue={eraserSelected ? 1 : 3}
+    min={1}
+    max={10}
+    step={1}
+    onChange={sliderChangeHandler}
+
+/>
+
+<span>
+    {
+        eraserSelected ? (<FaEraser size={17}/>) : (<FaPencilAlt size={17}/>)
+    }
+</span>
+
+
+      </div>
             
 
 
@@ -332,23 +398,25 @@ export default function Home() {
                 } }><MenuIcon className='text-white'/></div>
                 </div>
             </div>
-            <div className=' grid-cols-3 gap-2 hidden md:grid'>
+            <div className='  gap-8 hidden md:flex justify-between items-center mx-6'>
                 <Button
                     onClick={() => setReset(true)}
-                    className='z-20 bg-black text-white font-bold text-xl'
+                    className='z-20 bg-red-600 hover:bg-red-700 text-white font-bold text-xl flex-1'
                     variant='default' 
                     color='black'
                 >
                     Reset
                 </Button>
                 <Group className='z-20'>
+                    <button className={` p-3 rounded-full  hover:scale-105 ${!eraserSelected ? ('bg-white text-black'): (' bg-slate-900 text-white')}`} onClick={() => seteraserSelecetd(false)}><FaPencilAlt size={20}/></button>
                     {SWATCHES.map((swatch) => (
                         <ColorSwatch className='cursor-pointer hover:scale-110' key={swatch} color={swatch} onClick={() => setColor(swatch)} />
                     ))}
+                    <button className={` p-3 rounded-full  hover:scale-105 ${eraserSelected ? ('bg-white text-black'): (' bg-slate-900 text-white')}`} onClick={() => seteraserSelecetd(true)}><FaEraser size={20}/></button>
                 </Group>
                 <Button
                     onClick={runRoute}
-                    className='z-20 bg-black text-white font-bold text-xl'
+                    className='z-20 bg-green-600 hover:bg-green-700 text-white font-bold text-xl flex-1'
                     variant='default'
                     color='white'
                 >
