@@ -257,11 +257,15 @@ export default function Home() {
     const openRef = useRef<HTMLButtonElement>(null);
     const closeRef = useRef<HTMLButtonElement>(null);
 
+    const handleOpenChange = (open:boolean) => {
+        setIsMenuOpen(open);
+    }
+
     return (
         <>
 
              
-                <Sheet >
+                <Sheet onOpenChange={handleOpenChange}>
 
                 <SheetTrigger>
         <Button variant="outline" className='hidden' ref={openRef} >Open</Button>
@@ -302,7 +306,7 @@ export default function Home() {
             </div>
                   
                   <SheetFooter>
-                    <SheetClose asChild >
+                    <SheetClose>
                       <Button onClick={() => setIsMenuOpen(false)} ref={closeRef} className='hidden'></Button>
                     </SheetClose>
                   </SheetFooter>
@@ -311,19 +315,20 @@ export default function Home() {
             
 
 
-            <div className='w-full h-14 bg-slate-900 z-20 fixed top-0 left-0 block md:hidden '>
+            <div className='w-full h-14 bg-slate-900 z-20 top-0 left-0 block fixed md:hidden  '>
                 <div className='flex w-10/12 mx-auto justify-between items-center h-full'>
                 <div className='font-semibold text-2xl text-white '>SnapSolver</div>
                 <div className='p-2 bg-slate-700 rounded-full cursor-pointer hover:scale-105' onClick={() => {
-                    setIsMenuOpen(!isMenuOpen);
-                if(openRef.current && closeRef.current){
+                    
+                
                     if(isMenuOpen){
-                        closeRef.current.click();
+                        closeRef?.current?.click();
                         
                     }else{
-                        openRef.current.click();
+                        openRef?.current?.click();
                     }
-                }
+    
+                
                 } }><MenuIcon className='text-white'/></div>
                 </div>
             </div>
