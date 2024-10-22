@@ -70,6 +70,7 @@ const people = [
   },
 ];
 
+
 const FloatingIconSquare = ({
   icon: Icon,
   initialX,
