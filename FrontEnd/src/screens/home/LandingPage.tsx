@@ -1,14 +1,33 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { motion, useAnimation, useInView } from 'framer-motion'
-import { ArrowRightIcon, CalculatorIcon, PencilIcon, DocumentChartBarIcon, AcademicCapIcon, SparklesIcon, UserIcon, UserPlusIcon, CalculatorIcon as CalcIcon } from '@heroicons/react/24/outline'
-import { Link } from 'react-router-dom'
-import calc from '../../assets/calc.png'
-import showcase2 from '../../assets/showcase2.png'
+import { useState, useEffect, useRef } from "react";
+import { motion, useAnimation, useInView } from "framer-motion";
+import {
+  ArrowRightIcon,
+  CalculatorIcon,
+  PencilIcon,
+  DocumentChartBarIcon,
+  AcademicCapIcon,
+  SparklesIcon,
+  UserIcon,
+  UserPlusIcon,
+  CalculatorIcon as CalcIcon,
+} from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
+import calc from "../../assets/calc.png";
+import showcase2 from "../../assets/showcase2.png";
+import showcase1 from "../../assets/showcase1.png";
 
-const FloatingIconSquare = ({ icon: Icon, initialX, initialY }:{icon: React.FC<React.SVGProps<SVGSVGElement>>,initialX:number,initialY:number}) => {
-  const controls = useAnimation()
+const FloatingIconSquare = ({
+  icon: Icon,
+  initialX,
+  initialY,
+}: {
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  initialX: number;
+  initialY: number;
+}) => {
+  const controls = useAnimation();
 
   useEffect(() => {
     controls.start({
@@ -21,41 +40,40 @@ const FloatingIconSquare = ({ icon: Icon, initialX, initialY }:{icon: React.FC<R
         repeatType: "reverse",
         ease: "easeInOut",
       },
-    })
-  }, [controls, initialX, initialY])
+    });
+  }, [controls, initialX, initialY]);
 
   return (
-    <motion.div
-      animate={controls}
-      className="absolute"
-    >
+    <motion.div animate={controls} className="absolute">
       <div className="bg-purple-600 bg-opacity-20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-400">
         <Icon className="w-12 h-12 text-purple-300" />
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-const MacScreen = ({ children }:{children:React.ReactNode}) => (
-  <div className="bg-gray-800 rounded-2xl p-4 shadow-2xl max-w-3xl mx-auto">
+const MacScreen = ({ children }: { children: React.ReactNode }) => (
+  <div className="bg-gray-800 rounded-2xl p-4 shadow-2xl max-w-6xl mx-auto">
     <div className="bg-gray-900 rounded-xl overflow-hidden">
       <div className="bg-gray-800 p-2 flex items-center space-x-2">
         <div className="w-3 h-3 rounded-full bg-red-500"></div>
         <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
         <div className="w-3 h-3 rounded-full bg-green-500"></div>
       </div>
-      <div className="p-4">
-        {children}
-      </div>
+      <div className="p-4">{children}</div>
     </div>
   </div>
-)
+);
 
-const FeatureCard = ({ icon: Icon, title, description }: {
-    icon: React.FC<React.SVGProps<SVGSVGElement>>;
-    title: string;
-    description: string;
-  }) => (
+const FeatureCard = ({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  title: string;
+  description: string;
+}) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
     className="bg-gray-800 p-6 rounded-xl shadow-lg"
@@ -64,28 +82,42 @@ const FeatureCard = ({ icon: Icon, title, description }: {
     <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
     <p className="text-gray-300">{description}</p>
   </motion.div>
-)
+);
 
-const AnimatedText = ({ text, className }:{text:string,className:string}) => (
+const AnimatedText = ({
+  text,
+  className,
+}: {
+  text: string;
+  className: string;
+}) => (
   <div className={`flex flex-wrap justify-center ${className}`}>
-    {text.split('').map((char:string, index:number) => (
+    {text.split("").map((char: string, index: number) => (
       <motion.span
         key={index}
         className="inline-block"
         whileHover={{
           scale: 1.2,
           rotate: 5,
-          color: '#a855f7',
-          transition: { duration: 0.2 }
+          color: "#a855f7",
+          transition: { duration: 0.2 },
         }}
       >
-        {char === ' ' ? '\u00A0' : char}
+        {char === " " ? "\u00A0" : char}
       </motion.span>
     ))}
   </div>
-)
+);
 
-const StatCard = ({ icon: Icon, value, label }:{icon: React.FC<React.SVGProps<SVGSVGElement>>,value:string,label:string}) => (
+const StatCard = ({
+  icon: Icon,
+  value,
+  label,
+}: {
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  value: string;
+  label: string;
+}) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
     className="bg-purple-800 bg-opacity-30 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-purple-400 flex flex-col items-center"
@@ -101,9 +133,15 @@ const StatCard = ({ icon: Icon, value, label }:{icon: React.FC<React.SVGProps<SV
     </motion.span>
     <span className="text-purple-200">{label}</span>
   </motion.div>
-)
+);
 
-const FAQItem = ({ question, answer }:{question:string,answer:string}) => (
+const FAQItem = ({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) => (
   <motion.div
     whileHover={{ scale: 1.02 }}
     className="bg-gray-700 p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:bg-gray-600"
@@ -111,11 +149,11 @@ const FAQItem = ({ question, answer }:{question:string,answer:string}) => (
     <h3 className="text-xl font-bold text-white mb-2">{question}</h3>
     <p className="text-gray-300">{answer}</p>
   </motion.div>
-)
+);
 
-const ScrollAnimatedSection = ({ children }:{children:React.ReactNode}) => {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, amount: 0.2 })
+const ScrollAnimatedSection = ({ children }: { children: React.ReactNode }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
     <motion.div
@@ -126,19 +164,19 @@ const ScrollAnimatedSection = ({ children }:{children:React.ReactNode}) => {
     >
       {children}
     </motion.div>
-  )
-}
+  );
+};
 
 export default function LandingPage() {
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     // Add smooth scrolling behavior
-    document.documentElement.style.scrollBehavior = 'smooth'
+    document.documentElement.style.scrollBehavior = "smooth";
     return () => {
-      document.documentElement.style.scrollBehavior = 'auto'
-    }
-  }, [])
+      document.documentElement.style.scrollBehavior = "auto";
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white">
@@ -162,10 +200,22 @@ export default function LandingPage() {
 
       <main className="pt-24">
         <section className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
-          <FloatingIconSquare icon={CalculatorIcon} initialX={-600} initialY={-100} />
-          <FloatingIconSquare icon={PencilIcon} initialX={500} initialY={-150} />
-          <FloatingIconSquare icon={DocumentChartBarIcon} initialX={-150} initialY={250} />
-          
+          <FloatingIconSquare
+            icon={CalculatorIcon}
+            initialX={-600}
+            initialY={-100}
+          />
+          <FloatingIconSquare
+            icon={PencilIcon}
+            initialX={500}
+            initialY={-150}
+          />
+          <FloatingIconSquare
+            icon={DocumentChartBarIcon}
+            initialX={-150}
+            initialY={250}
+          />
+
           <div className="max-w-5xl w-full text-center z-10">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -181,24 +231,26 @@ export default function LandingPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-xl md:text-2xl text-purple-200 mb-12"
             >
-              SnapSolver harnesses the power of AI to transform how you approach mathematics.
+              SnapSolver harnesses the power of AI to transform how you approach
+              mathematics.
             </motion.p>
-            <Link to={'/canvas'}>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg flex items-center mx-auto"
-              onHoverStart={() => setIsHovered(true)}
-              onHoverEnd={() => setIsHovered(false)}
-            >
-              Start Calculating
+            <Link to={"/canvas"}>
               <motion.div
-                animate={{ x: isHovered ? 5 : 0 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg flex items-center mx-auto w-fit"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                onHoverStart={() => setIsHovered(true)}
+                onHoverEnd={() => setIsHovered(false)}
               >
-                <ArrowRightIcon className="w-5 h-5 ml-2" />
+                Start Calculating
+                <motion.div
+                  animate={{ x: isHovered ? 5 : 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <ArrowRightIcon className="w-5 h-5 ml-2" />
+                </motion.div>
               </motion.div>
-            </motion.button>
             </Link>
           </div>
         </section>
@@ -240,8 +292,10 @@ export default function LandingPage() {
 
         <ScrollAnimatedSection>
           <section className="py-24 px-4 bg-gray-800">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 text-center">See SnapSolver in Action</h2>
+            <div className="max-w-6xl mx-auto flex flex-col gap-8">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center">
+                See SnapSolver in Action
+              </h2>
               <MacScreen>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -250,6 +304,20 @@ export default function LandingPage() {
                 >
                   <img
                     src={showcase2}
+                    alt="SnapSolver Interface"
+                    className="w-full rounded-lg shadow-lg"
+                  />
+                </motion.div>
+              </MacScreen>
+
+              <MacScreen>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <img
+                    src={showcase1}
                     alt="SnapSolver Interface"
                     className="w-full rounded-lg shadow-lg"
                   />
@@ -274,28 +342,45 @@ export default function LandingPage() {
                       Experience the Future of Calculation
                     </h3>
                     <p className="text-purple-200 mb-6">
-                      Join thousands of students and professionals who have transformed their mathematical capabilities with SnapSolver.
+                      Join thousands of students and professionals who have
+                      transformed their mathematical capabilities with
+                      SnapSolver.
                     </p>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold shadow-lg flex items-center"
-                    >
-                      Start Free Trial
-                      <ArrowRightIcon className="w-5 h-5 ml-2" />
-                    </motion.button>
+                    <Link to={'/canavs'}>
+                      <motion.div
+                        className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold shadow-lg flex items-center w-fit"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 17,
+                        }}
+                        onHoverStart={() => setIsHovered(true)}
+                        onHoverEnd={() => setIsHovered(false)}
+                      >
+                        Start Free Trial
+                        <motion.div
+                          animate={{ x: isHovered ? 5 : 0 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 10,
+                          }}
+                        >
+                          <ArrowRightIcon className="w-5 h-5 ml-2" />
+                        </motion.div>
+                      </motion.div>
+                    </Link>
                   </div>
                   <motion.div
                     animate={{
                       y: [0, -15, 0],
-                      transition: { repeat: Infinity, duration: 3 }
+                      transition: { repeat: Infinity, duration: 3 },
                     }}
                     className="w-64 h-64"
                   >
-                    <img
-                      src={calc}
-                      alt="SnapSolver App Interface"
-                    />
+                    <img src={calc} alt="SnapSolver App Interface" />
                   </motion.div>
                 </div>
               </motion.div>
@@ -306,11 +391,25 @@ export default function LandingPage() {
         <ScrollAnimatedSection>
           <section className="py-24 px-4">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-bold mb-12 text-center">SnapSolver by the Numbers</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-12 text-center">
+                SnapSolver by the Numbers
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <StatCard icon={UserIcon} value="1M+" label="Website Visitors" />
-                <StatCard icon={UserPlusIcon} value="500K+" label="Registered Users" />
-                <StatCard icon={CalcIcon} value="10M+" label="Calculations Performed" />
+                <StatCard
+                  icon={UserIcon}
+                  value="1M+"
+                  label="Website Visitors"
+                />
+                <StatCard
+                  icon={UserPlusIcon}
+                  value="500K+"
+                  label="Registered Users"
+                />
+                <StatCard
+                  icon={CalcIcon}
+                  value="10M+"
+                  label="Calculations Performed"
+                />
               </div>
             </div>
           </section>
@@ -334,9 +433,13 @@ export default function LandingPage() {
                 className="bg-gray-800 p-8 rounded-xl shadow-lg"
               >
                 <p className="text-xl text-purple-200 mb-4">
-                  "SnapSolver has completely changed how I approach complex  calculations. It's like having a brilliant math tutor available 24/7!"
+                  "SnapSolver has completely changed how I approach complex
+                  calculations. It's like having a brilliant math tutor
+                  available 24/7!"
                 </p>
-                <p className="font-semibold text-white">- Sarah J., Engineering Student</p>
+                <p className="font-semibold text-white">
+                  - Sarah J., Engineering Student
+                </p>
               </motion.div>
             </div>
           </section>
@@ -371,14 +474,38 @@ export default function LandingPage() {
       <footer className="bg-gray-900 py-12 px-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="mb-8 md:mb-0">
-            <h3 className="text-2xl font-bold text-purple-300 mb-2">SnapSolver</h3>
-            <p className="text-gray-400">Empowering mathematical minds with AI</p>
+            <h3 className="text-2xl font-bold text-purple-300 mb-2">
+              SnapSolver
+            </h3>
+            <p className="text-gray-400">
+              Empowering mathematical minds with AI
+            </p>
           </div>
           <nav className="flex gap-8">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">About</a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">Features</a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">Pricing</a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              About
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Features
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Pricing
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Contact
+            </a>
           </nav>
         </div>
         <div className="mt-8 text-center text-gray-500">
@@ -386,5 +513,5 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
