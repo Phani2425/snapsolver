@@ -4,6 +4,19 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Draggable from 'react-draggable';
 import {SWATCHES} from '@/constants';
+import { MenuIcon } from 'lucide-react';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetFooter,
+    SheetClose,
+    SheetTrigger
+    
+  } from "@/components/ui/sheet"
+  
 // import {LazyBrush} from 'lazy-brush';
 
 interface GeneratedResult {
@@ -17,6 +30,27 @@ interface Response {
     assign: boolean;
 }
 
+// MathJax type definitions
+declare global {
+    interface MathJaxConfig {
+      tex2jax: {
+        inlineMath: [string, string][];
+      };
+    }
+  
+    interface MathJaxHub {
+      Config: (config: MathJaxConfig) => void;
+      Queue: (args: (string | unknown[])[]) => void;
+      Typeset: (element?: HTMLElement | null) => void;
+    }
+  
+    interface Window {
+      MathJax: {
+        Hub: MathJaxHub;
+      }
+    }
+  }
+
 export default function Home() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
@@ -26,6 +60,7 @@ export default function Home() {
     const [result, setResult] = useState<GeneratedResult>();
     const [latexPosition, setLatexPosition] = useState({ x: 10, y: 200 });
     const [latexExpression, setLatexExpression] = useState<Array<string>>([]);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // const lazyBrush = new LazyBrush({
     //     radius: 10,
@@ -33,13 +68,7 @@ export default function Home() {
     //     initialPoint: { x: 0, y: 0 },
     // });
 
-    useEffect(() => {
-        if (latexExpression.length > 0 && window.MathJax) {
-            setTimeout(() => {
-                window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
-            }, 0);
-        }
-    }, [latexExpression]);
+
 
     useEffect(() => {
         if (result) {
@@ -70,22 +99,50 @@ export default function Home() {
             }
 
         }
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
-        script.async = true;
-        document.head.appendChild(script);
 
-        script.onload = () => {
-            window.MathJax.Hub.Config({
-                tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            });
-        };
-
-        return () => {
-            document.head.removeChild(script);
-        };
 
     }, []);
+
+
+    useEffect(() => {
+        const initMathJax = (): HTMLScriptElement => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
+            script.async = true;
+            
+            script.onload = () => {
+                if (window.MathJax) {
+                    const config: MathJaxConfig = {
+                        tex2jax: {
+                            inlineMath: [['$', '$'], ['\\(', '\\)']]
+                        }
+                    };
+                    window.MathJax.Hub.Config(config);
+                }
+            };
+            
+            document.head.appendChild(script);
+            return script;
+        };
+
+        const script = initMathJax();
+        return () => {
+            if (script && document.head.contains(script)) {
+                document.head.removeChild(script);
+            }
+        };
+    }, []);
+
+
+    useEffect(() => {
+        if (latexExpression.length > 0 && window.MathJax) {
+            // Use type assertion to help TypeScript understand the argument structure
+            const typesetArg: [string, unknown] = ["Typeset", window.MathJax.Hub];
+            setTimeout(() => {
+                window.MathJax.Hub.Queue([typesetArg]);
+            }, 0);
+        }
+    }, [latexExpression]);
 
     const renderLatexToCanvas = (expression: string, answer: string) => {
         const latex = `\\(\\LARGE{${expression} = ${answer}}\\)`;
@@ -197,9 +254,80 @@ export default function Home() {
         }
     };
 
+    const openRef = useRef<HTMLButtonElement>(null);
+    const closeRef = useRef<HTMLButtonElement>(null);
+
     return (
         <>
-            <div className='grid grid-cols-3 gap-2 mt-3'>
+
+             
+                <Sheet >
+
+                <SheetTrigger>
+        <Button variant="outline" className='hidden' ref={openRef} >Open</Button>
+      </SheetTrigger>
+                
+                <SheetContent side={'left'} className='bg-slate-950'>
+                  <SheetHeader >
+                    <SheetTitle><div className='font-semibold text-2xl text-white '>SnapSolver</div></SheetTitle>
+                    <SheetDescription>
+                      
+                    </SheetDescription>
+                  </SheetHeader>
+
+                  <div className=' grid-cols-1 gap-4 mt-3 grid'>
+                <Button
+                    onClick={() => {setReset(true);setIsMenuOpen(false);}}
+                    className='z-20 bg-black text-white font-bold text-xl'
+                    variant='default' 
+                    color='black'
+                >
+                    Reset
+                </Button>
+                <Button
+                     
+                    onClick={() => {runRoute();setIsMenuOpen(false);}}
+                    className='z-20 bg-black text-white font-bold text-xl'
+                    variant='default'
+                    color='white'
+                >
+                    Run
+                </Button>
+                <Group className='z-20 flex '>
+                    {SWATCHES.map((swatch) => (
+                        <ColorSwatch className='cursor-pointer hover:scale-110' key={swatch} color={swatch} onClick={() => setColor(swatch)} />
+                    ))}
+                </Group>
+               
+            </div>
+                  
+                  <SheetFooter>
+                    <SheetClose asChild >
+                      <Button onClick={() => setIsMenuOpen(false)} ref={closeRef} className='hidden'></Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
+            
+
+
+            <div className='w-full h-14 bg-slate-900 z-20 fixed top-0 left-0 block md:hidden '>
+                <div className='flex w-10/12 mx-auto justify-between items-center h-full'>
+                <div className='font-semibold text-2xl text-white '>SnapSolver</div>
+                <div className='p-2 bg-slate-700 rounded-full cursor-pointer hover:scale-105' onClick={() => {
+                    setIsMenuOpen(!isMenuOpen);
+                if(openRef.current && closeRef.current){
+                    if(isMenuOpen){
+                        closeRef.current.click();
+                        
+                    }else{
+                        openRef.current.click();
+                    }
+                }
+                } }><MenuIcon className='text-white'/></div>
+                </div>
+            </div>
+            <div className=' grid-cols-3 gap-2 hidden md:grid'>
                 <Button
                     onClick={() => setReset(true)}
                     className='z-20 bg-black text-white font-bold text-xl'
@@ -236,7 +364,7 @@ export default function Home() {
                 <Draggable
                     key={index}
                     defaultPosition={latexPosition}
-                    onStop={(e, data) => setLatexPosition({ x: data.x, y: data.y })}
+                    onStop={(_, data) => setLatexPosition({ x: data.x, y: data.y })}
                 >
                     <div className="absolute p-2 text-white rounded shadow-md">
                         <div className="latex-content">{latex}</div>
