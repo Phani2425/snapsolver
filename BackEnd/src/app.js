@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const calculatorRouter = require('./routes/calculator');
-const { SERVER_URL, PORT, ENV } = require('./config/constants');
+const { PORT,ENV } = require('./config/constants');
+
 
 const app = express();
 
@@ -14,8 +15,8 @@ app.get('/', (req, res) => {
 
 app.use('/calculate', calculatorRouter);
 
-app.listen(PORT, SERVER_URL, () => {
-  console.log(`Server running on http://${SERVER_URL}:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });
 
 if (ENV === 'dev') {
