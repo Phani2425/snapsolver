@@ -107,7 +107,7 @@ const FloatingIconSquare = ({
 };
 
 const MacScreen = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-gray-800 rounded-2xl p-4 shadow-2xl max-w-6xl mx-auto z-10">
+  <div className="bg-gray-800 rounded-2xl p-4 shadow-2xl max-w-6xl mx-auto z-10 sticky top-28">
     <div className="bg-gray-900 rounded-xl overflow-hidden">
       <div className="bg-gray-800 p-2 flex items-center space-x-2">
         <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -292,7 +292,7 @@ export default function LandingPage() {
             </BackgroundLines>
             <Link to={"/canvas"}>
               <motion.div
-                className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg flex items-center mx-auto w-fit z-20"
+                className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg flex items-center mx-auto w-fit mb-2 z-50"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -348,7 +348,7 @@ export default function LandingPage() {
 
         <ScrollAnimatedSection>
           <section className="py-24 w-full rounded-md bg-slate-900 relative flex flex-col items-center justify-center antialiased">
-            <div className="max-w-6xl mx-auto flex flex-col gap-8">
+            <div className="max-w-6xl mx-auto flex flex-col gap-8 relative">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center z-10">
                 See SnapSolver in Action
               </h2>
@@ -498,7 +498,7 @@ export default function LandingPage() {
                   available 24/7!"
                 </p>
                 <p className="font-semibold text-white">
-                  - Sarah J., Engineering Student
+                  - Adarsh Verma., Engineering Student
                 </p>
               </motion.div>
             </div>
@@ -506,7 +506,7 @@ export default function LandingPage() {
         </ScrollAnimatedSection>
 
         <ScrollAnimatedSection>
-          <section className="py-24 px-4 bg-gray-800 relative w-full overflow-hidden flex flex-col items-center justify-center rounded-lg">
+          <section className="py-24 px-4 bg-gray-800 relative w-full overflow-hidden flex flex-col items-center justify-center rounded-t-lg">
 
           <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
  

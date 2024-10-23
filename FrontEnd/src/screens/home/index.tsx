@@ -20,7 +20,6 @@ import Slider from "@mui/material/Slider";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaEraser } from "react-icons/fa";
 
-
 interface GeneratedResult {
   expression: string;
   answer: string;
@@ -66,8 +65,6 @@ export default function Home() {
   const [penSize, setPenSize] = useState<number>(3);
   const [eraserSize, seteraserSize] = useState<number>(1);
   const [eraserSelected, seteraserSelecetd] = useState(false);
-
-
 
   useEffect(() => {
     if (result) {
@@ -306,7 +303,7 @@ export default function Home() {
         <SheetContent side={"left"} className="bg-slate-950">
           <SheetHeader>
             <SheetTitle>
-              <div className="font-semibold text-2xl text-white ">
+              <div className="font-semibold text-2xl text-white text-start mb-4">
                 SnapSolver
               </div>
             </SheetTitle>
@@ -314,27 +311,32 @@ export default function Home() {
           </SheetHeader>
 
           <div className=" grid-cols-1 gap-4 mt-3 grid">
-            <Button
-              onClick={() => {
-                setReset(true);
-                setIsMenuOpen(false);
-              }}
-              className="z-20 bg-red-600 hover:bg-red-700 text-white font-bold text-xl select-none"
-              variant="default"
-              color="black"
-            >
-              Reset
-            </Button>
-            <Button
-              onClick={() => {
-                runRoute();
-                setIsMenuOpen(false);
-              }}
-              className="z-20 text-white font-bold text-xl bg-green-500 hover:bg-green-700 select-none"
-              color="white"
-            >
-              Run
-            </Button>
+            <SheetClose>
+              {" "}
+              <Button
+                onClick={() => {
+                  setReset(true);
+                  setIsMenuOpen(false);
+                }}
+                className="z-20 bg-red-600 hover:bg-red-700 text-white font-bold text-xl select-none w-full"
+                variant="default"
+                color="black"
+              >
+                Reset
+              </Button>
+            </SheetClose>
+            <SheetClose>
+              <Button
+                onClick={() => {
+                  runRoute();
+                  setIsMenuOpen(false);
+                }}
+                className="z-20 text-white font-bold text-xl bg-green-500 hover:bg-green-700 select-none w-full"
+                color="white"
+              >
+                Run
+              </Button>
+            </SheetClose>
             <Group className="z-20 flex ">
               {SWATCHES.map((swatch) => (
                 <ColorSwatch
@@ -344,7 +346,51 @@ export default function Home() {
                   onClick={() => setColor(swatch)}
                 />
               ))}
+
+              <button
+                className={` p-3 rounded-full  hover:scale-105 ${
+                  !eraserSelected
+                    ? "bg-white text-black"
+                    : " bg-slate-900 text-white"
+                }`}
+                onClick={() => seteraserSelecetd(false)}
+              >
+                <FaPencilAlt size={20} />
+              </button>
+
+              <button
+                className={` p-3 rounded-full  hover:scale-105 ${
+                  eraserSelected
+                    ? "bg-white text-black"
+                    : " bg-slate-900 text-white"
+                }`}
+                onClick={() => seteraserSelecetd(true)}
+              >
+                <FaEraser size={20} />
+              </button>
             </Group>
+
+            <div className="bg-slate-300 px-4 rounded-lg flex items-center gap-4 mt-5">
+              <Slider
+                style={{ zIndex: 20 }}
+                aria-label="pen size"
+                orientation="horizontal"
+                valueLabelDisplay="auto"
+                defaultValue={eraserSelected ? 1 : 3}
+                min={1}
+                max={10}
+                step={1}
+                onChange={sliderChangeHandler}
+              />
+
+              <span>
+                {eraserSelected ? (
+                  <FaEraser size={17} />
+                ) : (
+                  <FaPencilAlt size={17} />
+                )}
+              </span>
+            </div>
           </div>
 
           <SheetFooter>
@@ -352,8 +398,8 @@ export default function Home() {
               <Button
                 onClick={() => setIsMenuOpen(false)}
                 ref={closeRef}
-                className="hidden"
-              ></Button>
+                className="mt-10"
+              >Done</Button>
             </SheetClose>
           </SheetFooter>
         </SheetContent>
@@ -362,7 +408,7 @@ export default function Home() {
       {/* Slider positioned absolutely */}
       <div
         style={{ position: "absolute", top: "35%", left: "40px", zIndex: 20 }}
-        className="bg-slate-300 px-1 py-3 rounded-lg flex flex-col items-center gap-4"
+        className="bg-slate-300 px-1 py-3 rounded-lg hidden md:flex flex-col items-center gap-4"
       >
         <Slider
           style={{ zIndex: 20, height: "200px" }}
