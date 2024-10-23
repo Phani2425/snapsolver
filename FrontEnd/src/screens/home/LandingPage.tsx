@@ -252,7 +252,7 @@ export default function LandingPage() {
         </motion.button>
       </nav>
 
-      <main className="pt-24">
+      <main className="pt-24 px-2 md:px-0">
         <section className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
           <FloatingIconSquare
             icon={CalculatorIcon}
@@ -348,7 +348,7 @@ export default function LandingPage() {
 
         <ScrollAnimatedSection>
           <section className="py-24 w-full rounded-md bg-slate-900 relative flex flex-col items-center justify-center antialiased">
-            <div className="max-w-6xl mx-auto flex flex-col gap-8 relative">
+            <div className="max-w-6xl px-3 md:px-0 mx-auto flex flex-col gap-8 relative">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center z-10">
                 See SnapSolver in Action
               </h2>
