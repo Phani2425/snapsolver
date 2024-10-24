@@ -27,6 +27,7 @@ import { CardSpotlight } from "@/components/ui/card-spotlight";
 // import { apiConnector } from "../../Services/api";
 import { useAuth0 } from "@auth0/auth0-react";
 import { IoMdArrowDropdown } from "react-icons/io";
+import CountUp from 'react-countup'
 
 const people = [
   {
@@ -100,7 +101,7 @@ const FloatingIconSquare = ({
 
   return (
     <motion.div animate={controls} className="absolute">
-      <div className="bg-purple-600 bg-opacity-20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-400">
+      <div className="bg-purple-600 bg-opacity-20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-400 translate-x-[350px] md:translate-x-0">
         <Icon className="w-12 h-12 text-purple-300" />
       </div>
     </motion.div>
@@ -167,7 +168,7 @@ const StatCard = ({
   label,
 }: {
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
-  value: string;
+  value: number;
   label: string;
 }) => (
   <motion.div
@@ -181,7 +182,7 @@ const StatCard = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      {value}
+      <CountUp end={value} duration={4} enableScrollSpy scrollSpyOnce/>+
     </motion.span>
     <span className="text-purple-200">{label}</span>
   </motion.div>
@@ -221,7 +222,7 @@ const ScrollAnimatedSection = ({ children }: { children: React.ReactNode }) => {
 
 export default function LandingPage() {
   const [isHovered, setIsHovered] = useState(false);
-  const [userName,setuserName] = useState<(string|undefined)[]>(['Creator','Coder','Cutie😉']);
+  const [userName,setuserName] = useState<(string|undefined)[]>(['Creator','Explorer','innovator']);
   const [currentname,setcurrentname] = useState(0);
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
 
@@ -505,17 +506,17 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <StatCard
                   icon={UserIcon}
-                  value="1M+"
+                  value={1500}
                   label="Website Visitors"
                 />
                 <StatCard
                   icon={UserPlusIcon}
-                  value="500K+"
+                  value={600}
                   label="Registered Users"
                 />
                 <StatCard
                   icon={CalcIcon}
-                  value="10M+"
+                  value={2000}
                   label="Calculations Performed"
                 />
               </div>
