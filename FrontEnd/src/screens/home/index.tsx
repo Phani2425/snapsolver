@@ -277,8 +277,8 @@ export default function Home() {
         }
       }
 
-      const centerX = (minX + maxX) / 2;
-      const centerY = (minY + maxY) / 2;
+      const centerX = (minX + maxX) / 2-100;
+      const centerY = (minY + maxY) / 2-100;
 
       setLatexPosition({ x: centerX, y: centerY });
       resp.data.forEach((data: Response) => {
