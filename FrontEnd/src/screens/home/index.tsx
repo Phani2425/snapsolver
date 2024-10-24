@@ -166,6 +166,27 @@ export default function Home() {
     }
   };
 
+
+  //function to get coordinates of mouseclick and touch
+  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const rect = canvas.getBoundingClientRect();
+      if ('touches' in e) {
+        return {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top
+        };
+      } else {
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+    }
+    return { x: 0, y: 0 };
+  };
+
   const resetCanvas = () => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -176,19 +197,20 @@ export default function Home() {
     }
   };
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.style.background = "black";
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.beginPath();
-        ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        const { x, y } = getCoordinates(e);
+        ctx.moveTo(x, y);
         setIsDrawing(true);
       }
     }
   };
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing) {
       return;
     }
@@ -196,18 +218,14 @@ export default function Home() {
     if (canvas) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        if (eraserSelected) {
-          ctx.clearRect(
-            e.nativeEvent.offsetX - 10,
-            e.nativeEvent.offsetY - 10,
-            eraserSize * 10, // Width of the eraser
-            eraserSize * 10 // Height of the eraser
-          );
-        } else {
-          ctx.strokeStyle = color;
-          ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-          ctx.stroke();
-        }
+          const { x, y } = getCoordinates(e);
+          if (eraserSelected) {
+            ctx.clearRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
+          } else {
+            ctx.strokeStyle = color;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+          }
       }
     }
   };
@@ -500,6 +518,9 @@ export default function Home() {
         onMouseMove={draw}
         onMouseUp={stopDrawing}
         onMouseOut={stopDrawing}
+        onTouchStart={startDrawing}
+        onTouchMove={draw}
+        onTouchEnd={stopDrawing}
       />
 
       {latexExpression &&
