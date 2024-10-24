@@ -27,6 +27,7 @@ import { BackgroundLines } from "@/components/ui/background-lines";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 // import { apiConnector } from "../../Services/api";
 import { useAuth0 } from "@auth0/auth0-react";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 const people = [
   {
@@ -221,8 +222,33 @@ const ScrollAnimatedSection = ({ children }: { children: React.ReactNode }) => {
 
 export default function LandingPage() {
   const [isHovered, setIsHovered] = useState(false);
-
+  const [userName,setuserName] = useState<(string|undefined)[]>(['Creator','Coder','Cutie😉']);
+  const [currentname,setcurrentname] = useState(0);
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
+
+  useEffect(() => {
+
+    if(isAuthenticated && user && user.name){
+      setuserName((prev) => {return [...prev,user.name]})
+    }
+
+  },[isAuthenticated,user])
+
+  useEffect(() => {
+
+      
+      const intervalId = setInterval(() => {
+         setcurrentname((prev) => (prev+1)%userName.length);
+      },2000)
+
+      return () => {
+        clearInterval(intervalId)
+      };
+
+
+  },[userName])
+
+
 
   useEffect(() => {
     // Add smooth scrolling behavior
@@ -245,10 +271,15 @@ export default function LandingPage() {
         </motion.h1>
         <motion.div>
           {isAuthenticated ? (
-            <div>
-              <img src={user?.picture} alt={user?.name} />
-              <h2>{user?.name}</h2>
-              <p>{user?.email}</p>
+            <div className="relative">
+              <div className="group flex items-center gap-3 cursor-pointer">
+              <h2 className="font-semibold">👋 {userName[currentname]}</h2>
+              <div className="w-12 h-12 rounded-full bg-violet-900 p-1"><img src={user?.picture} alt={user?.name} className="rounded-full"/></div>
+              <IoMdArrowDropdown size={24} fontWeight={900} className="group-hover:rotate-180 transition-transform duration-200 font-bold" />
+              
+
+              <div className="absolute bg-violet-900 rounded-lg px-4 py-3 top-14 right-4 opacity-0 group-hover:opacity-100 hover:bg-violet-950 font-semibold">
+              
               <button
                 onClick={() =>
                   logout({ logoutParams: { returnTo: window.location.origin } })
@@ -256,6 +287,9 @@ export default function LandingPage() {
               >
                 Log Out
               </button>
+              </div>
+              </div>
+
             </div>
           ) : (
             <motion.button
