@@ -324,7 +324,7 @@ export default function LandingPage() {
           />
 
           <div className="max-w-5xl w-full text-center z-10">
-            <BackgroundLines className="flex items-center justify-center w-full flex-col px-4 bg-transparent ">
+            <BackgroundLines className="flex items-center justify-center w-full flex-col px-4 bg-transparent pointer-events-none">
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
