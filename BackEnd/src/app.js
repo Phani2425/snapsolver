@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const calculatorRouter = require('./routes/calculator');
-const { PORT,ENV } = require('./config/constants');
+const { PORT, ENV } = require('./config/constants');
 
 
 const app = express();
@@ -23,7 +23,6 @@ if (ENV === 'dev') {
   // Enable hot reloading for development
   const livereload = require('livereload');
   const connectLivereload = require('connect-livereload');
-  
   const liveReloadServer = livereload.createServer();
   liveReloadServer.watch(__dirname);
   app.use(connectLivereload());
