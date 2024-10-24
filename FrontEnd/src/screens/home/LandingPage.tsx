@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -17,13 +18,15 @@ import { Link } from "react-router-dom";
 import calc from "../../assets/calc.png";
 import showcase2 from "../../assets/showcase2.png";
 import showcase1 from "../../assets/showcase1.png";
+import google from "../../assets/google.svg";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Boxes } from "@/components/ui/background-boxes";
 import { cn } from "@/lib/utils";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
-
+// import { apiConnector } from "../../Services/api";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const people = [
   {
@@ -70,7 +73,6 @@ const people = [
   },
 ];
 
-
 const FloatingIconSquare = ({
   icon: Icon,
   initialX,
@@ -97,7 +99,6 @@ const FloatingIconSquare = ({
   }, [controls, initialX, initialY]);
 
   return (
-    
     <motion.div animate={controls} className="absolute">
       <div className="bg-purple-600 bg-opacity-20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-400">
         <Icon className="w-12 h-12 text-purple-300" />
@@ -128,14 +129,11 @@ const FeatureCard = ({
   title: string;
   description: string;
 }) => (
-    <CardSpotlight className=" bg-gray-800 p-6 rounded-xl shadow-lg hover:scale-105 transition-all duration-200" >
-
+  <CardSpotlight className=" bg-gray-800 p-6 rounded-xl shadow-lg hover:scale-105 transition-all duration-200">
     <Icon className="w-12 h-12 text-purple-500 mb-4 z-50" />
     <h3 className="text-xl font-bold text-white mb-2 z-20">{title}</h3>
     <p className="text-gray-300 z-20">{description}</p>
-
-    </CardSpotlight>
-
+  </CardSpotlight>
 );
 
 const AnimatedText = ({
@@ -224,6 +222,8 @@ const ScrollAnimatedSection = ({ children }: { children: React.ReactNode }) => {
 export default function LandingPage() {
   const [isHovered, setIsHovered] = useState(false);
 
+  const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
+
   useEffect(() => {
     // Add smooth scrolling behavior
     document.documentElement.style.scrollBehavior = "smooth";
@@ -243,13 +243,32 @@ export default function LandingPage() {
         >
           SnapSolver
         </motion.h1>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-purple-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg"
-        >
-          Sign Up
-        </motion.button>
+        <motion.div>
+          {isAuthenticated ? (
+            <div>
+              <img src={user?.picture} alt={user?.name} />
+              <h2>{user?.name}</h2>
+              <p>{user?.email}</p>
+              <button
+                onClick={() =>
+                  logout({ logoutParams: { returnTo: window.location.origin } })
+                }
+              >
+                Log Out
+              </button>
+            </div>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-purple-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg flex gap-2 items-center"
+              onClick={() => loginWithRedirect()}
+            >
+              <img src={google} className="w-6 hidden md:block" />
+              Sign Up
+            </motion.button>
+          )}
+        </motion.div>
       </nav>
 
       <main className="pt-24 px-2 md:px-0">
@@ -271,24 +290,24 @@ export default function LandingPage() {
           />
 
           <div className="max-w-5xl w-full text-center z-10">
-          <BackgroundLines className="flex items-center justify-center w-full flex-col px-4 bg-transparent ">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
-            >
-              Revolutionize Your Calculations
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl md:text-2xl text-purple-200 mb-12"
-            >
-              SnapSolver harnesses the power of AI to transform how you approach
-              mathematics.
-            </motion.p>
+            <BackgroundLines className="flex items-center justify-center w-full flex-col px-4 bg-transparent ">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
+              >
+                Revolutionize Your Calculations
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-xl md:text-2xl text-purple-200 mb-12"
+              >
+                SnapSolver harnesses the power of AI to transform how you
+                approach mathematics.
+              </motion.p>
             </BackgroundLines>
             <Link to={"/canvas"}>
               <motion.div
@@ -380,7 +399,7 @@ export default function LandingPage() {
                 </motion.div>
               </MacScreen>
             </div>
-            <BackgroundBeams/>
+            <BackgroundBeams />
           </section>
         </ScrollAnimatedSection>
 
@@ -507,31 +526,30 @@ export default function LandingPage() {
 
         <ScrollAnimatedSection>
           <section className="py-24 px-4 bg-gray-800 relative w-full overflow-hidden flex flex-col items-center justify-center rounded-t-lg">
+            <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
 
-          <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
- 
-          <Boxes />
-            
-        
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className={cn("md:text-4xl text-xl text-white relative z-20 mb-9")}
-              >
-                Frequently Asked Questions
-              </motion.h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto z-10">
-                <FAQItem
-                  question="How accurate is SnapSolver?"
-                  answer="Our AI is trained on vast datasets and continuously updated, ensuring high accuracy across various mathematical domains."
-                />
-                <FAQItem
-                  question="Can SnapSolver handle advanced mathematics?"
-                  answer="SnapSolver is equipped to handle problems from basic arithmetic to advanced calculus and beyond."
-                />
-              </div>
-            
+            <Boxes />
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className={cn(
+                "md:text-4xl text-xl text-white relative z-20 mb-9"
+              )}
+            >
+              Frequently Asked Questions
+            </motion.h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto z-10">
+              <FAQItem
+                question="How accurate is SnapSolver?"
+                answer="Our AI is trained on vast datasets and continuously updated, ensuring high accuracy across various mathematical domains."
+              />
+              <FAQItem
+                question="Can SnapSolver handle advanced mathematics?"
+                answer="SnapSolver is equipped to handle problems from basic arithmetic to advanced calculus and beyond."
+              />
+            </div>
           </section>
         </ScrollAnimatedSection>
       </main>

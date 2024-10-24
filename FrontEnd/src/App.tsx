@@ -6,8 +6,10 @@ import LandingPage from "./screens/home/LandingPage"
 const App = () => {
   return (
     <div>
-      <Routes>'<Route path="/" element={<LandingPage/>}></Route>'
+      <Routes>
+        <Route path="/" element={<LandingPage/>}></Route>
         <Route path="/canvas" element={<Home/>}></Route>
+        <Route path="*" element={<LandingPage/>}></Route>
       </Routes>
     </div>
   )
