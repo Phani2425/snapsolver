@@ -229,7 +229,7 @@ export default function LandingPage() {
   useEffect(() => {
 
     if(isAuthenticated && user && user.name){
-      setuserName((prev) => {return [...prev,user.name]})
+      setuserName((prev) => {return [...prev,user.name?.split(' ')[0]]})
     }
 
   },[isAuthenticated,user])
@@ -626,7 +626,7 @@ export default function LandingPage() {
           </nav>
         </div>
         <div className="mt-8 text-center text-gray-500">
-          <p>made with ❤️ by Phani Bhusan</p>
+          <p>made with <span className="animate-pulse">❤️</span> by Phani Bhusan</p>
         </div>
       </footer>
     </div>
