@@ -18,7 +18,6 @@ import { Link } from "react-router-dom";
 import calc from "../../assets/calc.png";
 import showcase2 from "../../assets/showcase2.png";
 import showcase1 from "../../assets/showcase1.png";
-import google from "../../assets/google.svg";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Boxes } from "@/components/ui/background-boxes";
@@ -260,12 +259,12 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white">
-      <nav className="w-full p-6 flex justify-between items-center bg-gray-800 bg-opacity-50 backdrop-blur-md fixed top-0 z-50">
+      <nav className="w-full p-3 md:p-5 flex justify-between items-center bg-gray-800 bg-opacity-50 backdrop-blur-md fixed top-0 z-50">
         <motion.h1
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-3xl font-bold text-purple-300"
+          className="text-2xl md:text-3xl font-bold text-purple-300"
         >
           SnapSolver
         </motion.h1>
@@ -295,10 +294,9 @@ export default function LandingPage() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-purple-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg flex gap-2 items-center"
+              className="bg-purple-600 text-white px-4 py-1 md:xp-6 md:py-2 rounded-full font-semibold shadow-lg flex gap-2 items-center"
               onClick={() => loginWithRedirect()}
             >
-              <img src={google} className="w-6 hidden md:block" />
               Sign Up
             </motion.button>
           )}
@@ -329,7 +327,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                className="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
+                className="text-[52px] md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
               >
                 Revolutionize Your Calculations
               </motion.h2>
