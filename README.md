@@ -8,7 +8,6 @@ SnapSolver is a full-stack application that allows users to draw or upload image
 
 - [Features](#features)
 - [Technologies Used](#technologies-used)
-- [Project Structure](#project-structure)
 - [Setup and Installation](#setup-and-installation)
 - [Usage](#usage)
 
@@ -34,14 +33,6 @@ SnapSolver is a full-stack application that allows users to draw or upload image
 - Node.js
 - Express
 - Google Generative AI
-
-## Project Structure
-
-Workspace
-Sure, here is a comprehensive README file for your project:
-
-MathImageAnalyzer/ ├── BackEnd/ │ ├── .env │ ├── .gitignore │ ├── package.json │ ├── src/ │ │ ├── app.js │ │ ├── config/ │ │ │ └── constants.js │ │ ├── Controllers/ │ │ ├── models/ │ │ ├── routes/ │ │ └── utils/ ├── FrontEnd/ │ ├── .env │ ├── .gitignore │ ├── .vite/ │ ├── components.json │ ├── eslint.config.js │ ├── index.html │ ├── package.json │ ├── postcss.config.cjs │ ├── postcss.config.js │ ├── public/ │ ├── README.md │ ├── src/ │ │ ├── App.css │ │ ├── App.tsx │ │ ├── assets/ │ │ ├── components/ │ │ └── screens/ │ │ └── home/ │ │ └── index.tsx │ ├── tailwind.config.js │ ├── tsconfig.app.json │ ├── tsconfig.app.tsbuildinfo │ ├── tsconfig.json │ ├── tsconfig.node.json │ ├── tsconfig.node.tsbuildinfo │ └── vite.config.ts
-
 
 ## Setup and Installation
 
