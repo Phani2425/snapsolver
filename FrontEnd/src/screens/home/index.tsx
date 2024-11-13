@@ -344,18 +344,18 @@ export default function Home() {
     }
   };
 
-  const handleTouchStart = (id) => {
+  const handleTouchStart = () => {
     setTouchStartTime(Date.now());
   };
 
-  const handleTouchEnd = (id) => {
+  const handleTouchEnd = (id:number) => {
     const touchDuration = Date.now() - touchStartTime;
     if (touchDuration > 500) {  // Long press: more than 500ms
       handleDelete(id);
     }
   };
 
-  const handleDoubleTap = (id) => {
+  const handleDoubleTap = (id:number) => {
     const now = Date.now();
     const DOUBLE_TAP_DELAY = 300;
     if (now - lastTap < DOUBLE_TAP_DELAY) {
@@ -364,7 +364,7 @@ export default function Home() {
     setLastTap(now);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id:number) => {
     //Implementation to delete latex expression at index id
     console.log("Delete item at index:", id);
     //Example implementation:  setLatexExpression(latexExpression.filter((_, index) => index !== id));
@@ -598,7 +598,7 @@ export default function Home() {
                 maxHeight: '80vh',
                 overflowY: 'auto'
               }}
-              onTouchStart={() => handleTouchStart(index)}
+              onTouchStart={() => handleTouchStart()}
               onTouchEnd={() => handleTouchEnd(index)}
               onClick={() => handleDoubleTap(index)}
             >
