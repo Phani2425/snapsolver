@@ -147,7 +147,7 @@ export default function Home() {
             tex2jax: {
               inlineMath: [
                 ["$", "$"],
-                ["\$$", "\$$"],
+                ["\\(", "\$$"],
               ],
             },
           };
@@ -276,6 +276,12 @@ export default function Home() {
     const canvas = canvasRef.current;
 
     if (canvas) {
+      // Clear the canvas before processing
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
       const response = await axios({
         method: "post",
         url: `${import.meta.env.VITE_API_URL}/calculate`,
@@ -558,19 +564,14 @@ export default function Home() {
           <div className="absolute p-2 text-white rounded shadow-md bg-black bg-opacity-50 max-w-[90vw] md:max-w-[70vw] lg:max-w-[50vw] break-words cursor-move">
             <div 
               className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 cursor-pointer"
-              onClick={() => handleDelete(latex.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(latex.id);
+              }}
             >
               <XCircle size={16} />
             </div>
-            <div 
-              className="latex-content text-sm md:text-base lg:text-lg"
-              onDoubleClick={() => handleDelete(latex.id)}
-              onTouchStart={(e) => {
-                if (e.touches.length === 2) {
-                  handleDelete(latex.id);
-                }
-              }}
-            >
+            <div className="latex-content text-sm md:text-base lg:text-lg">
               {latex.content}
             </div>
           </div>
