@@ -312,8 +312,8 @@ export default function Home() {
         }
       }
 
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+      const centerX = canvas.width / 2 - 100;  // Subtracting half the assumed width of the LaTeX container
+      const centerY = canvas.height / 2 - 25;  // Subtracting half the assumed height of the LaTeX container
 
       setLatexPosition({ x: centerX, y: centerY });
       resp.data.forEach((data: Response) => {
@@ -591,10 +591,13 @@ export default function Home() {
             key={index}
             defaultPosition={latexPosition}
             onStop={(_, data) => setLatexPosition({ x: data.x, y: data.y })}
-            bounds="parent"
           >
-            <div 
+            <div
               className="absolute p-2 text-white rounded shadow-md bg-black bg-opacity-50 max-w-[90vw] md:max-w-[70vw] lg:max-w-[50vw] break-words cursor-move"
+              style={{
+                maxHeight: '80vh',
+                overflowY: 'auto'
+              }}
               onTouchStart={() => handleTouchStart(index)}
               onTouchEnd={() => handleTouchEnd(index)}
               onClick={() => handleDoubleTap(index)}
