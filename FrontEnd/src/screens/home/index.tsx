@@ -19,6 +19,7 @@ import {
 import Slider from "@mui/material/Slider";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaEraser } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 interface GeneratedResult {
   expression: string;
@@ -274,6 +275,7 @@ export default function Home() {
     const canvas = canvasRef.current;
 
     if (canvas) {
+      const toastId = toast.loading('Processing your equation...');
       const response = await axios({
         method: "post",
         url: `${import.meta.env.VITE_API_URL}/calculate`,
@@ -281,6 +283,11 @@ export default function Home() {
           image: canvas.toDataURL("image/png"),
           dict_of_vars: dictOfVars,
         },
+      });
+
+      toast.success('Solution found! 🎯', {
+        id: toastId,
+        duration: 3000,
       });
 
       const resp = await response.data;
