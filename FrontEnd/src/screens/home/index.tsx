@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import Draggable from "react-draggable";
 import { SWATCHES } from "@/constants";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, XCircle } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -29,6 +29,12 @@ interface Response {
   expr: string;
   result: string;
   assign: boolean;
+}
+
+interface LatexExpression {
+  id: number;
+  content: string;
+  position: { x: number; y: number };
 }
 
 // MathJax type definitions
@@ -59,8 +65,7 @@ export default function Home() {
   const [reset, setReset] = useState(false);
   const [dictOfVars, setDictOfVars] = useState({});
   const [result, setResult] = useState<GeneratedResult>();
-  const [latexPosition, setLatexPosition] = useState({ x: 10, y: 200 });
-  const [latexExpression, setLatexExpression] = useState<Array<string>>([]);
+  const [latexExpressions, setLatexExpressions] = useState<LatexExpression[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [penSize, setPenSize] = useState<number>(3);
   const [eraserSize, seteraserSize] = useState<number>(1);
@@ -76,7 +81,7 @@ export default function Home() {
   useEffect(() => {
     if (reset) {
       resetCanvas();
-      setLatexExpression([]);
+      setLatexExpressions([]);
       setResult(undefined);
       setDictOfVars({});
       setPenSize(3);
@@ -92,7 +97,7 @@ export default function Home() {
       const ctx = canvas.getContext("2d");
       if (ctx) {
         canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight - canvas.offsetTop;
+        canvas.height = window.innerHeight;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.lineWidth = 3;
@@ -105,7 +110,7 @@ export default function Home() {
         if (ctx) {
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight - canvas.offsetTop;
+          canvas.height = window.innerHeight;
           ctx.putImageData(imageData, 0, 0);
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
@@ -142,7 +147,7 @@ export default function Home() {
             tex2jax: {
               inlineMath: [
                 ["$", "$"],
-                ["\\(", "\$$"],
+                ["\$$", "\$$"],
               ],
             },
           };
@@ -163,37 +168,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (latexExpression.length > 0 && window.MathJax) {
+    if (latexExpressions.length > 0 && window.MathJax) {
       const typesetArg: [string, unknown] = ["Typeset", window.MathJax.Hub];
       setTimeout(() => {
         window.MathJax.Hub.Queue([typesetArg]);
       }, 0);
     }
-  }, [latexExpression]);
-
-  useEffect(() => {
-    if (latexExpression.length > 0) {
-      const canvas = canvasRef.current;
-      if (canvas) {
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        setLatexPosition({ x: centerX - 100, y: centerY - 50 });
-      }
-    }
-  }, [latexExpression]);
-
+  }, [latexExpressions]);
 
   const renderLatexToCanvas = (expression: string, answer: string) => {
     const latex = `${expression} = ${answer}`;
-    setLatexExpression([...latexExpression, latex]);
-
-    // Clear the main canvas
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      setLatexExpressions(prev => [...prev, {
+        id: Date.now(),
+        content: latex,
+        position: { x: centerX - 100, y: centerY - 50 }
+      }]);
     }
   };
 
@@ -302,30 +295,7 @@ export default function Home() {
           });
         }
       });
-      const ctx = canvas.getContext("2d");
-      const imageData = ctx!.getImageData(0, 0, canvas.width, canvas.height);
-      let minX = canvas.width,
-        minY = canvas.height,
-        maxX = 0,
-        maxY = 0;
 
-      for (let y = 0; y < canvas.height; y++) {
-        for (let x = 0; x < canvas.width; x++) {
-          const i = (y * canvas.width + x) * 4;
-          if (imageData.data[i + 3] > 0) {
-            minX = Math.min(minX, x);
-            minY = Math.min(minY, y);
-            maxX = Math.max(maxX, x);
-            maxY = Math.max(maxY, y);
-          }
-        }
-      }
-
-      // const centerX = (minX + maxX) / 2 - 100;
-      // const centerY = (minY + maxY) / 2 - 100;
-
-      // setLatexPosition({ x: centerX, y: centerY });
-      setLatexPosition({ x: canvas.width / 2 - 100, y: canvas.height / 2 - 50 });
       resp.data.forEach((data: Response) => {
         setTimeout(() => {
           setResult({
@@ -352,6 +322,16 @@ export default function Home() {
         setPenSize(newValue);
       }
     }
+  };
+
+  const handleDrag = (id: number, data: { x: number; y: number }) => {
+    setLatexExpressions(prev => prev.map(expr => 
+      expr.id === id ? { ...expr, position: data } : expr
+    ));
+  };
+
+  const handleDelete = (id: number) => {
+    setLatexExpressions(prev => prev.filter(expr => expr.id !== id));
   };
 
   return (
@@ -507,7 +487,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="  gap-11 hidden md:flex justify-between items-center mx-8">
+      <div className="gap-11 hidden md:flex justify-between items-center mx-8">
         <Button
           onClick={() => setReset(true)}
           className="z-20 bg-red-600 hover:bg-red-700 text-white font-bold text-xl flex-1 select-none "
@@ -568,19 +548,34 @@ export default function Home() {
         onTouchEnd={stopDrawing}
       />
 
-      {latexExpression &&
-        latexExpression.map((latex, index) => (
-          <Draggable
-            key={index}
-            defaultPosition={latexPosition}
-            onStop={(_, data) => setLatexPosition({ x: data.x, y: data.y })}
-            bounds="parent"
-          >
-            <div className="absolute p-2 text-white rounded shadow-md bg-black bg-opacity-50 max-w-[90vw] md:max-w-[70vw] lg:max-w-[50vw] break-words">
-              <div className="latex-content text-sm md:text-base lg:text-lg">{latex}</div>
+      {latexExpressions.map((latex) => (
+        <Draggable
+          key={latex.id}
+          position={latex.position}
+          onStop={(_, data) => handleDrag(latex.id, data)}
+          bounds="parent"
+        >
+          <div className="absolute p-2 text-white rounded shadow-md bg-black bg-opacity-50 max-w-[90vw] md:max-w-[70vw] lg:max-w-[50vw] break-words cursor-move">
+            <div 
+              className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 cursor-pointer"
+              onClick={() => handleDelete(latex.id)}
+            >
+              <XCircle size={16} />
             </div>
-          </Draggable>
-        ))}
+            <div 
+              className="latex-content text-sm md:text-base lg:text-lg"
+              onDoubleClick={() => handleDelete(latex.id)}
+              onTouchStart={(e) => {
+                if (e.touches.length === 2) {
+                  handleDelete(latex.id);
+                }
+              }}
+            >
+              {latex.content}
+            </div>
+          </div>
+        </Draggable>
+      ))}
     </>
   );
 }
