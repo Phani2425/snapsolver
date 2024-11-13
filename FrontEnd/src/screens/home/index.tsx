@@ -66,6 +66,9 @@ export default function Home() {
   const [eraserSize, seteraserSize] = useState<number>(1);
   const [eraserSelected, seteraserSelecetd] = useState(false);
   const previousPositionRef = useRef<{ x: number; y: number } | null>(null);
+  const [touchStartTime, setTouchStartTime] = useState(0);
+  const [lastTap, setLastTap] = useState(0);
+
 
   useEffect(() => {
     if (result) {
@@ -341,6 +344,33 @@ export default function Home() {
     }
   };
 
+  const handleTouchStart = (id) => {
+    setTouchStartTime(Date.now());
+  };
+
+  const handleTouchEnd = (id) => {
+    const touchDuration = Date.now() - touchStartTime;
+    if (touchDuration > 500) {  // Long press: more than 500ms
+      handleDelete(id);
+    }
+  };
+
+  const handleDoubleTap = (id) => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+    if (now - lastTap < DOUBLE_TAP_DELAY) {
+      handleDelete(id);
+    }
+    setLastTap(now);
+  };
+
+  const handleDelete = (id) => {
+    //Implementation to delete latex expression at index id
+    console.log("Delete item at index:", id);
+    //Example implementation:  setLatexExpression(latexExpression.filter((_, index) => index !== id));
+  };
+
+
   return (
     <>
       <Sheet onOpenChange={handleOpenChange}>
@@ -563,8 +593,13 @@ export default function Home() {
             onStop={(_, data) => setLatexPosition({ x: data.x, y: data.y })}
             bounds="parent"
           >
-            <div className="absolute p-2 text-white rounded shadow-md bg-black bg-opacity-50 max-w-[90vw] md:max-w-[70vw] lg:max-w-[50vw] break-words">
-              <div className="latex-content text-sm md:text-base lg:text-lg">{latex}</div>
+            <div 
+              className="absolute p-2 text-white rounded shadow-md bg-black bg-opacity-50 max-w-[90vw] md:max-w-[70vw] lg:max-w-[50vw] break-words cursor-move"
+              onTouchStart={() => handleTouchStart(index)}
+              onTouchEnd={() => handleTouchEnd(index)}
+              onClick={() => handleDoubleTap(index)}
+            >
+              <div className="latex-content text-sm md:text-base lg:text-lg whitespace-normal">{latex}</div>
             </div>
           </Draggable>
         ))}
