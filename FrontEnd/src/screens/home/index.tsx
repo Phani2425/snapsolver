@@ -142,7 +142,7 @@ export default function Home() {
             tex2jax: {
               inlineMath: [
                 ["$", "$"],
-                ["\$$", "\$$"],
+                ["\\(", "\$$"],
               ],
             },
           };
@@ -170,6 +170,18 @@ export default function Home() {
       }, 0);
     }
   }, [latexExpression]);
+
+  useEffect(() => {
+    if (latexExpression.length > 0) {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        setLatexPosition({ x: centerX - 100, y: centerY - 50 });
+      }
+    }
+  }, [latexExpression]);
+
 
   const renderLatexToCanvas = (expression: string, answer: string) => {
     const latex = `${expression} = ${answer}`;
@@ -309,10 +321,11 @@ export default function Home() {
         }
       }
 
-      const centerX = (minX + maxX) / 2 - 100;
-      const centerY = (minY + maxY) / 2 - 100;
+      // const centerX = (minX + maxX) / 2 - 100;
+      // const centerY = (minY + maxY) / 2 - 100;
 
-      setLatexPosition({ x: centerX, y: centerY });
+      // setLatexPosition({ x: centerX, y: centerY });
+      setLatexPosition({ x: canvas.width / 2 - 100, y: canvas.height / 2 - 50 });
       resp.data.forEach((data: Response) => {
         setTimeout(() => {
           setResult({
@@ -561,9 +574,10 @@ export default function Home() {
             key={index}
             defaultPosition={latexPosition}
             onStop={(_, data) => setLatexPosition({ x: data.x, y: data.y })}
+            bounds="parent"
           >
-            <div className="absolute p-2 text-white rounded shadow-md">
-              <div className="latex-content">{latex}</div>
+            <div className="absolute p-2 text-white rounded shadow-md bg-black bg-opacity-50 max-w-[90vw] md:max-w-[70vw] lg:max-w-[50vw] break-words">
+              <div className="latex-content text-sm md:text-base lg:text-lg">{latex}</div>
             </div>
           </Draggable>
         ))}
