@@ -1,6 +1,6 @@
 import { ColorSwatch, Group } from "@mantine/core";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import Draggable from "react-draggable";
 import { SWATCHES } from "@/constants";
@@ -65,6 +65,7 @@ export default function Home() {
   const [penSize, setPenSize] = useState<number>(3);
   const [eraserSize, seteraserSize] = useState<number>(1);
   const [eraserSelected, seteraserSelecetd] = useState(false);
+  const previousPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (result) {
@@ -93,9 +94,28 @@ export default function Home() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight - canvas.offsetTop;
         ctx.lineCap = "round";
+        ctx.lineJoin = "round";
         ctx.lineWidth = 3;
       }
     }
+
+    const handleResize = () => {
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight - canvas.offsetTop;
+          ctx.putImageData(imageData, 0, 0);
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.lineWidth = penSize;
+        }
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
@@ -122,7 +142,7 @@ export default function Home() {
             tex2jax: {
               inlineMath: [
                 ["$", "$"],
-                ["\\(", "\\)"],
+                ["\$$", "\$$"],
               ],
             },
           };
@@ -144,7 +164,6 @@ export default function Home() {
 
   useEffect(() => {
     if (latexExpression.length > 0 && window.MathJax) {
-      // Use type assertion to help TypeScript understand the argument structure
       const typesetArg: [string, unknown] = ["Typeset", window.MathJax.Hub];
       setTimeout(() => {
         window.MathJax.Hub.Queue([typesetArg]);
@@ -166,9 +185,7 @@ export default function Home() {
     }
   };
 
-
-  //function to get coordinates of mouseclick and touch
-  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const getCoordinates = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (canvas) {
       const rect = canvas.getBoundingClientRect();
@@ -185,9 +202,9 @@ export default function Home() {
       }
     }
     return { x: 0, y: 0 };
-  };
+  }, []);
 
-  const resetCanvas = () => {
+  const resetCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext("2d");
@@ -195,9 +212,10 @@ export default function Home() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
-  };
+  }, []);
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const startDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.style.background = "black";
@@ -207,10 +225,13 @@ export default function Home() {
         const { x, y } = getCoordinates(e);
         ctx.moveTo(x, y);
         setIsDrawing(true);
+        previousPositionRef.current = { x, y };
       }
     }
-  };
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  }, [getCoordinates]);
+
+  const draw = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
     if (!isDrawing) {
       return;
     }
@@ -218,20 +239,33 @@ export default function Home() {
     if (canvas) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
-          const { x, y } = getCoordinates(e);
-          if (eraserSelected) {
-            ctx.clearRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
+        const { x, y } = getCoordinates(e);
+        if (eraserSelected) {
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.beginPath();
+          ctx.arc(x, y, eraserSize / 2, 0, Math.PI * 2, false);
+          ctx.fill();
+        } else {
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.strokeStyle = color;
+          ctx.beginPath();
+          if (previousPositionRef.current) {
+            ctx.moveTo(previousPositionRef.current.x, previousPositionRef.current.y);
           } else {
-            ctx.strokeStyle = color;
-            ctx.lineTo(x, y);
-            ctx.stroke();
+            ctx.moveTo(x, y);
           }
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+        previousPositionRef.current = { x, y };
       }
     }
-  };
-  const stopDrawing = () => {
+  }, [isDrawing, eraserSelected, eraserSize, color, getCoordinates]);
+
+  const stopDrawing = useCallback(() => {
     setIsDrawing(false);
-  };
+    previousPositionRef.current = null;
+  }, []);
 
   const runRoute = async () => {
     const canvas = canvasRef.current;
@@ -250,7 +284,6 @@ export default function Home() {
       console.log("Response", resp);
       resp.data.forEach((data: Response) => {
         if (data.assign === true) {
-          // dict_of_vars[resp.result] = resp.answer;
           setDictOfVars({
             ...dictOfVars,
             [data.expr]: data.result,
@@ -268,7 +301,6 @@ export default function Home() {
         for (let x = 0; x < canvas.width; x++) {
           const i = (y * canvas.width + x) * 4;
           if (imageData.data[i + 3] > 0) {
-            // If pixel is not transparent
             minX = Math.min(minX, x);
             minY = Math.min(minY, y);
             maxX = Math.max(maxX, x);
@@ -277,8 +309,8 @@ export default function Home() {
         }
       }
 
-      const centerX = (minX + maxX) / 2-100;
-      const centerY = (minY + maxY) / 2-100;
+      const centerX = (minX + maxX) / 2 - 100;
+      const centerY = (minY + maxY) / 2 - 100;
 
       setLatexPosition({ x: centerX, y: centerY });
       resp.data.forEach((data: Response) => {
@@ -513,7 +545,7 @@ export default function Home() {
       <canvas
         ref={canvasRef}
         id="canvas"
-        className="absolute top-0 left-0 w-full h-full bg-black"
+        className="absolute top-0 left-0 w-full h-full bg-black touch-none"
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}
