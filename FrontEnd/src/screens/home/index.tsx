@@ -427,7 +427,7 @@ export default function Home() {
             <Group className="z-20 flex ">
               {SWATCHES.map((swatch) => (
                 <ColorSwatch
-                  className="cursor-pointer hover:scale-110"
+                className={`cursor-pointer hover:scale-110 ${color === swatch ? "border-2 border-white" : ""}`}
                   key={swatch}
                   color={swatch}
                   onClick={() => setColor(swatch)}
@@ -553,7 +553,7 @@ export default function Home() {
           </button>
           {SWATCHES.map((swatch) => (
             <ColorSwatch
-              className="cursor-pointer hover:scale-110"
+              className={`cursor-pointer hover:scale-110 ${color === swatch ? "border-2 border-white" : ""}`}
               key={swatch}
               color={swatch}
               onClick={() => setColor(swatch)}
